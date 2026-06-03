@@ -4,7 +4,8 @@ import { ExtractorPanel } from '@/features/scraper/components/extractor-panel'
 import { formatWeekLabel } from '@/shared/lib/utils'
 
 export default async function ExtractorPage() {
-  const sessions = await getScrapingSessions()
+  let sessions: Awaited<ReturnType<typeof getScrapingSessions>> = []
+  try { sessions = await getScrapingSessions() } catch { /* schema not ready */ }
 
   return (
     <div className="p-8">

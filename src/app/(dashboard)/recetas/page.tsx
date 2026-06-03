@@ -4,12 +4,15 @@ import { getSupplies } from '@/features/supplies/actions/supply-actions'
 import { RecipesManager } from '@/features/recipes/components/recipes-manager'
 
 export default async function RecetasPage() {
-  const [menuItems, supplies, modifierReqs, knownModifiers] = await Promise.all([
-    getMenuItems(),
-    getSupplies(),
-    getModifierRequirements(),
-    getKnownModifiers(),
-  ])
+  let menuItems: Awaited<ReturnType<typeof getMenuItems>> = []
+  let supplies: Awaited<ReturnType<typeof getSupplies>> = []
+  let modifierReqs: Awaited<ReturnType<typeof getModifierRequirements>> = []
+  let knownModifiers: string[] = []
+  try {
+    ;[menuItems, supplies, modifierReqs, knownModifiers] = await Promise.all([
+      getMenuItems(), getSupplies(), getModifierRequirements(), getKnownModifiers(),
+    ])
+  } catch { /* schema not ready */ }
 
   return (
     <RecipesManager

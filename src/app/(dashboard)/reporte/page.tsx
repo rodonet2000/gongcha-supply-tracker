@@ -11,12 +11,18 @@ interface Props {
 
 export default async function ReportePage({ searchParams }: Props) {
   const params = await searchParams
-  const sessions = await getScrapingSessions()
+  let sessions: Awaited<ReturnType<typeof getScrapingSessions>> = []
+  let requirements: Awaited<ReturnType<typeof calculateWeeklySupplyRequirements>> = []
+  try {
+    sessions = await getScrapingSessions()
+    const completed = sessions.filter((s) => s.status === 'completed')
+    const firstWeek = completed[0]?.week_start
+    const week = params.week ?? firstWeek ?? toISODateString(getWeekRange(new Date()).start)
+    if (week) requirements = await calculateWeeklySupplyRequirements(week)
+  } catch { /* schema not ready */ }
   const completedSessions = sessions.filter((s) => s.status === 'completed')
   const availableWeeks = completedSessions.map((s) => s.week_start)
-
   const selectedWeek = params.week ?? availableWeeks[0] ?? toISODateString(getWeekRange(new Date()).start)
-  const requirements = selectedWeek ? await calculateWeeklySupplyRequirements(selectedWeek) : []
 
   const selectedSession = completedSessions.find((s) => s.week_start === selectedWeek)
   const totalCost = requirements.reduce((sum, r) => sum + (r.estimated_cost ?? 0), 0)

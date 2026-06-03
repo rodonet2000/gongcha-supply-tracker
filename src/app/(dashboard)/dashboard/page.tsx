@@ -6,10 +6,16 @@ import { TrendingUp, ShoppingBag, DollarSign, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
-  const [sessions, summary] = await Promise.all([
-    getScrapingSessions(),
-    getWeeklySummary(),
-  ])
+  let sessions: Awaited<ReturnType<typeof getScrapingSessions>> = []
+  let summary: Awaited<ReturnType<typeof getWeeklySummary>> = []
+  try {
+    ;[sessions, summary] = await Promise.all([
+      getScrapingSessions(),
+      getWeeklySummary(),
+    ])
+  } catch {
+    // Supabase schema not yet available - show empty state
+  }
 
   const currentWeek = toISODateString(getWeekRange(new Date()).start)
   const latestWeek = summary[0]?.week_start ?? currentWeek

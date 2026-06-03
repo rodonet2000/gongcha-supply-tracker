@@ -11,11 +11,16 @@ interface Props {
 
 export default async function PedidosPage({ searchParams }: Props) {
   const params = await searchParams
-  const sessions = await getScrapingSessions()
+  let sessions: Awaited<ReturnType<typeof getScrapingSessions>> = []
+  let orders: Awaited<ReturnType<typeof getOrdersByWeek>> = []
+  try {
+    sessions = await getScrapingSessions()
+    const availableWeeks = sessions.filter((s) => s.status === 'completed').map((s) => s.week_start)
+    const selectedWeek = params.week ?? availableWeeks[0] ?? toISODateString(getWeekRange(new Date()).start)
+    orders = selectedWeek ? await getOrdersByWeek(selectedWeek) : []
+  } catch { /* schema not ready */ }
   const availableWeeks = sessions.filter((s) => s.status === 'completed').map((s) => s.week_start)
-
   const selectedWeek = params.week ?? availableWeeks[0] ?? toISODateString(getWeekRange(new Date()).start)
-  const orders = selectedWeek ? await getOrdersByWeek(selectedWeek) : []
 
   return (
     <div className="p-8">
