@@ -10,7 +10,7 @@ export function getSupabaseClient() {
     client = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { db: { schema: 'gongcha' } }
+      { db: { schema: 'gongcha' as unknown as undefined } }
     )
   }
   return client

@@ -85,7 +85,7 @@ export async function getKnownModifiers(): Promise<string[]> {
       .select('modifier_name')
       .order('modifier_name')
 
-    return [...new Set((raw ?? []).map((r) => r.modifier_name))]
+    return Array.from(new Set((raw ?? []).map((r) => r.modifier_name)))
   }
 
   return data ?? []

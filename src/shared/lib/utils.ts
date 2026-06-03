@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { startOfWeek, endOfWeek, format, parseISO } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { es } from 'date-fns/locale/es'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

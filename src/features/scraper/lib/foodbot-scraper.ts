@@ -230,12 +230,12 @@ export class FoodbotScraper {
     const inputCount = await dateInputs.count()
 
     if (inputCount >= 2) {
-      await dateInputs.nth(0).triple_click()
+      await dateInputs.nth(0).click({ clickCount: 3 })
       await dateInputs.nth(0).fill(startFmt)
-      await dateInputs.nth(1).triple_click()
+      await dateInputs.nth(1).click({ clickCount: 3 })
       await dateInputs.nth(1).fill(endFmt)
     } else if (inputCount === 1) {
-      await dateInputs.first().triple_click()
+      await dateInputs.first().click({ clickCount: 3 })
       await dateInputs.first().fill(`${startFmt} - ${endFmt}`)
     }
 

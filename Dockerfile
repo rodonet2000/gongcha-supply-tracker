@@ -3,7 +3,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 FROM base AS builder
 WORKDIR /app
@@ -17,10 +17,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN groupadd --system --gid 1001 nodejs
-RUN useradd --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 nextjs && \
+    mkdir -p ./public
 
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 

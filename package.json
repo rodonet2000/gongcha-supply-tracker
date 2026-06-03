@@ -17,7 +17,6 @@
     "playwright": "^1.50.0",
     "node-cron": "^3.0.3",
     "date-fns": "^4.1.0",
-    "date-fns/locale": "^4.1.0",
     "zod": "^3.24.0",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-select": "^2.1.4",
