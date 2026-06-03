@@ -11,7 +11,8 @@ interface Props {
 
 export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params
-  const data = await getOrderDetail(id)
+  let data: Awaited<ReturnType<typeof getOrderDetail>> = null
+  try { data = await getOrderDetail(id) } catch { /* schema not ready */ }
 
   if (!data) notFound()
 

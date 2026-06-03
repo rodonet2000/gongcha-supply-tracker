@@ -19,8 +19,14 @@ export default async function DashboardPage() {
 
   const currentWeek = toISODateString(getWeekRange(new Date()).start)
   const latestWeek = summary[0]?.week_start ?? currentWeek
-  const stats = await getOrdersStats(latestWeek)
-  const topItems = await getTopItemsByWeek(latestWeek)
+  let stats: Awaited<ReturnType<typeof getOrdersStats>> = null
+  let topItems: Awaited<ReturnType<typeof getTopItemsByWeek>> = []
+  try {
+    ;[stats, topItems] = await Promise.all([
+      getOrdersStats(latestWeek),
+      getTopItemsByWeek(latestWeek),
+    ])
+  } catch { /* schema not ready */ }
 
   const completedSessions = sessions.filter((s) => s.status === 'completed').length
   const lastSession = sessions[0]
