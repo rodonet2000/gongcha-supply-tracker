@@ -1,33 +1,34 @@
-FROM mcr.microsoft.com/playwright:v1.50.0-jammy AS base
+FROM node:20-slim
+
 WORKDIR /app
 
-FROM base AS deps
+# Instalar dependencias del sistema para Playwright/Chromium
+RUN apt-get update && apt-get install -y \
+    wget gnupg ca-certificates \
+    libglib2.0-0 libnss3 libnspr4 libdbus-1-3 \
+    libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+    libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
+    libasound2 libatspi2.0-0 libx11-6 libxcb1 libxext6 \
+    fonts-liberation fonts-noto-color-emoji \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar dependencias de la app
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Instalar Chromium para Playwright (sin las dependencias del sistema, ya las tenemos)
+RUN npx playwright install chromium
+
+# Copiar código y compilar
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-FROM base AS runner
-WORKDIR /app
+# Configuración de producción
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 nextjs && \
-    mkdir -p ./public
-
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+EXPOSE 3000
+CMD ["npm", "start"]
