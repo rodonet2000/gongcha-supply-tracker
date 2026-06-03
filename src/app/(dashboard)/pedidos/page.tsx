@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getOrdersByWeek } from '@/features/orders/actions/order-actions'
 import { getScrapingSessions } from '@/features/scraper/actions/scrape-actions'
 import { formatWeekLabel, formatDateEs, formatCurrency, getWeekRange, toISODateString } from '@/shared/lib/utils'

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getSupplies } from '@/features/supplies/actions/supply-actions'
 import { SuppliesManager } from '@/features/supplies/components/supplies-manager'
 

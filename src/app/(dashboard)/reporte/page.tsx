@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { calculateWeeklySupplyRequirements } from '@/features/reports/actions/report-actions'
 import { getScrapingSessions } from '@/features/scraper/actions/scrape-actions'
 import { formatWeekLabel, formatCurrency, getWeekRange, toISODateString } from '@/shared/lib/utils'

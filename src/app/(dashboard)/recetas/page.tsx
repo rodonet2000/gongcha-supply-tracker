@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getMenuItems, getModifierRequirements, getKnownModifiers } from '@/features/recipes/actions/recipe-actions'
 import { getSupplies } from '@/features/supplies/actions/supply-actions'
 import { RecipesManager } from '@/features/recipes/components/recipes-manager'

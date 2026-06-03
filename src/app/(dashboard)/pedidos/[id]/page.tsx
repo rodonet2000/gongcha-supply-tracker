@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getOrderDetail } from '@/features/orders/actions/order-actions'
 import { formatDateEs, formatCurrency } from '@/shared/lib/utils'
 import Link from 'next/link'

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getScrapingSessions } from '@/features/scraper/actions/scrape-actions'
 import { ExtractorPanel } from '@/features/scraper/components/extractor-panel'
 import { formatWeekLabel } from '@/shared/lib/utils'
