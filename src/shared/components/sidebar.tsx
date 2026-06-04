@@ -4,30 +4,44 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/shared/lib/utils'
 import {
-  LayoutDashboard,
-  Download,
-  ShoppingBag,
-  Package,
-  BookOpen,
-  BarChart3,
-  Coffee,
+  LayoutDashboard, Download, ShoppingBag, Package, BookOpen,
+  BarChart3, Coffee, ArrowDownToLine, ArrowUpFromLine, ShoppingCart,
+  Truck, ClipboardList, FileBarChart, Users,
 } from 'lucide-react'
+import type { UserRole, UserProfile } from '@/shared/types'
+import { UserMenu } from './user-menu'
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/extractor', label: 'Extractor', icon: Download },
-  { href: '/pedidos', label: 'Pedidos', icon: ShoppingBag },
-  { href: '/insumos', label: 'Insumos', icon: Package },
-  { href: '/recetas', label: 'Recetas', icon: BookOpen },
-  { href: '/reporte', label: 'Reporte', icon: BarChart3 },
+type NavItem = { href: string; label: string; icon: React.ElementType; roles: UserRole[] }
+
+const ALL_ROLES: UserRole[] = ['sucursal', 'administrador', 'direccion']
+const ADMIN_UP: UserRole[] = ['administrador', 'direccion']
+
+const NAV_ITEMS: NavItem[] = [
+  { href: '/dashboard',             label: 'Dashboard',   icon: LayoutDashboard, roles: ALL_ROLES },
+  { href: '/pedidos',               label: 'Pedidos',     icon: ShoppingBag,     roles: ALL_ROLES },
+  { href: '/insumos',               label: 'Insumos',     icon: Package,         roles: ALL_ROLES },
+  { href: '/entradas',              label: 'Entradas',    icon: ArrowDownToLine, roles: ALL_ROLES },
+  { href: '/salidas',               label: 'Salidas',     icon: ArrowUpFromLine, roles: ALL_ROLES },
+  { href: '/kardex',                label: 'Kardex',      icon: ClipboardList,   roles: ALL_ROLES },
+  { href: '/reportes/existencias',  label: 'Reportes',    icon: FileBarChart,    roles: ALL_ROLES },
+  { href: '/compras',               label: 'Compras',     icon: ShoppingCart,    roles: ADMIN_UP },
+  { href: '/proveedores',           label: 'Proveedores', icon: Truck,           roles: ADMIN_UP },
+  { href: '/usuarios',              label: 'Usuarios',    icon: Users,           roles: ADMIN_UP },
+  { href: '/extractor',             label: 'Extractor',   icon: Download,        roles: ADMIN_UP },
+  { href: '/recetas',               label: 'Recetas',     icon: BookOpen,        roles: ADMIN_UP },
+  { href: '/reporte',               label: 'Análisis',    icon: BarChart3,       roles: ADMIN_UP },
 ]
 
-export function Sidebar() {
+interface Props {
+  profile: UserProfile
+}
+
+export function Sidebar({ profile }: Props) {
   const pathname = usePathname()
+  const visibleItems = NAV_ITEMS.filter((item) => item.roles.includes(profile.role))
 
   return (
     <aside className="w-60 min-h-screen bg-slate-900 flex flex-col shrink-0">
-      {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-700">
         <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center shrink-0">
           <Coffee size={16} className="text-white" />
@@ -38,9 +52,8 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {navItems.map(({ href, label, icon: Icon }) => {
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {visibleItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (
             <Link
@@ -60,10 +73,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-slate-700">
-        <p className="text-slate-500 text-xs">Puerto Escondido · 2026</p>
-      </div>
+      <UserMenu profile={profile} />
     </aside>
   )
 }
