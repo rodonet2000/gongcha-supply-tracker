@@ -41,10 +41,20 @@ export default async function PedidosPage({ searchParams }: Props) {
 
       {orders.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-16 text-center">
-          <p className="text-slate-400 text-sm">No hay pedidos para esta semana.</p>
-          <Link href="/extractor" className="text-brand-600 text-sm hover:underline mt-2 inline-block">
-            Extraer datos →
-          </Link>
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-slate-400 text-sm font-medium">No hay pedidos para esta semana.</p>
+            <p className="text-slate-400 text-xs max-w-sm text-center">
+              Los pedidos aparecerán aquí después de ejecutar el extractor de Foodbot.
+              El extractor descarga los pedidos semanales automáticamente.
+            </p>
+            <Link
+              href="/extractor"
+              className="mt-2 bg-brand-600 hover:bg-brand-700 text-white text-sm
+                         font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              Ir al Extractor →
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
