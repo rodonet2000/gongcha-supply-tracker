@@ -16,10 +16,12 @@ export function middleware(request: NextRequest) {
   }
 
   // Fast cookie presence check — no network call, no Supabase client init.
-  // @supabase/ssr sets cookies named "sb-*-auth-token".
-  // Server Components do the actual session validation via getCurrentUser().
+  // @supabase/ssr v0.10+ stores the session under "supabase.auth.token"
+  // (the default STORAGE_KEY from @supabase/auth-js).
+  // Chunked cookies are named "supabase.auth.token.0", ".1", etc.
+  // Server Components do the actual JWT validation via getCurrentUser().
   const hasAuthCookie = request.cookies.getAll().some(
-    (c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token')
+    (c) => c.name.startsWith('supabase.auth.token')
   )
 
   if (!hasAuthCookie) {

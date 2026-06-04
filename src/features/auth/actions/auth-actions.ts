@@ -2,6 +2,7 @@
 
 import { createAuthClient } from '@/shared/lib/supabase/server'
 import { createServerClient } from '@/shared/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { UserProfile } from '@/shared/types'
 
@@ -12,9 +13,25 @@ export async function signIn(
   const password = formData.get('password') as string
 
   const supabase = await createAuthClient()
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) return { error: 'Credenciales incorrectas' }
+
+  // @supabase/ssr v0.10 writes cookies inside an onAuthStateChange callback
+  // that fires without `await`, so redirect() can throw before the cookie is
+  // written. Explicitly persist the session here to guarantee it arrives in
+  // the redirect response before the browser follows the 307.
+  if (data.session) {
+    const cookieStore = await cookies()
+    cookieStore.set('supabase.auth.token', JSON.stringify(data.session), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: data.session.expires_in,
+      path: '/',
+    })
+  }
+
   redirect('/dashboard')
 }
 
