@@ -47,6 +47,9 @@ CRON_SECRET=gongcha-cron-2026
 NEXT_PUBLIC_APP_URL=https://gongcha.rodosoft.digital
 PORT=3000
 HOSTNAME=0.0.0.0
+# Opcional — permite que las migraciones corran automáticamente al iniciar la app
+# Formato: postgresql://postgres:[PASSWORD]@supabase-db-h8occ6uko144qwdes4o43t7r:5432/postgres
+DATABASE_URL=postgresql://postgres:[POSTGRES_PASSWORD]@supabase-db-h8occ6uko144qwdes4o43t7r:5432/postgres
 ```
 
 ### Dominio
@@ -71,13 +74,34 @@ Command: curl -s "https://gongcha.rodosoft.digital/api/cron?secret=gongcha-cron-
 
 ---
 
+## Paso 3b: Cargar catálogo de insumos (131 productos)
+
+### Opción A — Con DATABASE_URL configurado (recomendado)
+Si `DATABASE_URL` apunta al contenedor PostgreSQL, las columnas nuevas se crean automáticamente y luego:
+
+```bash
+curl -X POST "https://gongcha.rodosoft.digital/api/seed?secret=gongcha-cron-2026"
+```
+
+### Opción B — Sin DATABASE_URL
+1. Primero corre el SQL en Supabase Studio (SQL Editor):
+   - Pega el contenido de `supabase/migrations/002_adjust_supplies_catalog.sql`
+2. Luego llama el endpoint:
+```bash
+curl -X POST "https://gongcha.rodosoft.digital/api/seed?secret=gongcha-cron-2026"
+```
+
+El endpoint es idempotente — se puede re-ejecutar sin duplicar registros.
+
+---
+
 ## Verificación post-deployment
 
 1. Abre `https://gongcha.rodosoft.digital/dashboard`
 2. Ve a **Extractor** → selecciona la semana actual → **Iniciar extracción**
 3. Espera que el scraper termine (puede tomar 10-30 minutos según la cantidad de pedidos)
 4. Ve a **Pedidos** para ver los datos extraídos
-5. Configura **Insumos** y **Recetas** para habilitar los reportes
+5. Verifica **Insumos** — deben aparecer 131 productos del catálogo
 
 ---
 

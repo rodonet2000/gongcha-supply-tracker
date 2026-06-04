@@ -4,6 +4,7 @@ import { getScrapingSessions } from '@/features/scraper/actions/scrape-actions'
 import { formatWeekLabel, formatDateEs, formatCurrency, getWeekRange, toISODateString } from '@/shared/lib/utils'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
+import { WeekSelector } from './week-selector'
 
 interface Props {
   searchParams: Promise<{ week?: string }>
@@ -31,25 +32,11 @@ export default async function PedidosPage({ searchParams }: Props) {
         </div>
 
         {/* Selector de semana */}
-        <form>
-          <select
-            name="week"
-            defaultValue={selectedWeek}
-            onChange={(e) => {
-              const url = new URL(window.location.href)
-              url.searchParams.set('week', e.target.value)
-              window.location.href = url.toString()
-            }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-          >
-            {availableWeeks.map((w) => (
-              <option key={w} value={w}>{formatWeekLabel(w)}</option>
-            ))}
-            {availableWeeks.length === 0 && (
-              <option value={selectedWeek}>{formatWeekLabel(selectedWeek)}</option>
-            )}
-          </select>
-        </form>
+        <WeekSelector
+          weeks={availableWeeks}
+          selected={selectedWeek}
+          formatLabel={formatWeekLabel}
+        />
       </div>
 
       {orders.length === 0 ? (
