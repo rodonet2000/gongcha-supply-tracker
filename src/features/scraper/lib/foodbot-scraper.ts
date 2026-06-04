@@ -2,6 +2,7 @@ import { chromium, Browser, Page } from 'playwright'
 import { createServerClient } from '@/shared/lib/supabase/server'
 import type { ScrapeProgressEvent } from '@/shared/types'
 import { format, addDays } from 'date-fns'
+import { calculateAndInsertAutoExits } from '@/features/scraper/actions/scrape-actions'
 
 type ProgressCallback = (event: ScrapeProgressEvent) => void
 
@@ -142,6 +143,26 @@ export class FoodbotScraper {
           completed_at: new Date().toISOString(),
         })
         .eq('id', sessionId)
+
+      // Auto-calculate stock exits from completed scraping session
+      try {
+        const branchResult = await supabase
+          .from('branches')
+          .select('id')
+          .eq('active', true)
+          .limit(1)
+          .single()
+        if (branchResult.data) {
+          await calculateAndInsertAutoExits(
+            sessionId,
+            weekStart,
+            branchResult.data.id,
+            '00000000-0000-0000-0000-000000000000'
+          )
+        }
+      } catch (err) {
+        console.error('[auto-exits] Error calculating stock exits:', err)
+      }
 
       onProgress({ type: 'completed', ordersCount: processed, sessionId })
     } catch (err) {
