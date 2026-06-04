@@ -134,3 +134,23 @@ export type ScrapeProgressEvent =
   | { type: 'completed'; ordersCount: number; sessionId: string }
   | { type: 'error'; message: string }
   | { type: 'duplicate'; external_id: string }
+
+export interface Branch {
+  id: string
+  name: string
+  code: string
+  active: boolean
+}
+
+export type UserRole = 'sucursal' | 'administrador' | 'direccion'
+
+export interface UserProfile {
+  id: string
+  user_id: string
+  full_name: string
+  role: UserRole
+  branch_id: string | null
+  active: boolean
+  created_at: string
+  branches?: Branch | null
+}
