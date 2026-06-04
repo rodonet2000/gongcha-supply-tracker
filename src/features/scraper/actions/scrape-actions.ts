@@ -128,7 +128,10 @@ export async function calculateAndInsertAutoExits(
   const supplyConsumption: Record<string, number> = {}
 
   for (const recipe of recipes ?? []) {
-    const menuName = (recipe.menu_items as { name: string } | null)?.name ?? ''
+    // Supabase may return menu_items as object or array depending on relation type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mi = recipe.menu_items as any
+    const menuName: string = Array.isArray(mi) ? (mi[0]?.name ?? '') : (mi?.name ?? '')
     const orderedQty = itemCounts[menuName] ?? 0
     if (orderedQty === 0) continue
     supplyConsumption[recipe.supply_id] = (supplyConsumption[recipe.supply_id] ?? 0) + recipe.quantity * orderedQty

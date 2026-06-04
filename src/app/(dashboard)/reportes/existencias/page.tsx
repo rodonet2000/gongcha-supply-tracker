@@ -17,11 +17,12 @@ export default async function ExistenciasPage({ searchParams }: Props) {
     ? session.profile.branch_id ?? undefined
     : params.branch
 
-  const report = await getExistenciasReport({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const report = (await getExistenciasReport({
     branchId,
     dateFrom: params.from,
     dateTo: params.to,
-  }).catch(() => ({ stock: [], entries: [], exits: [] }))
+  }).catch(() => ({ stock: [], entries: [], exits: [] }))) as any
 
   return <ExistenciasReport report={report} role={session.profile.role} />
 }
