@@ -19,17 +19,23 @@ export function middleware(request: NextRequest) {
   // (chunked: "sb-<ref>-auth-token.0", ".1", etc.)
   // For self-hosted, <ref> derives from the URL hostname.
   // Also check the legacy "supabase.auth.token" name for backwards compat.
-  const hasAuthCookie = request.cookies.getAll().some(
+  const allCookies = request.cookies.getAll()
+  console.log('[middleware] pathname:', pathname)
+  console.log('[middleware] cookies found:', allCookies.map(c => c.name))
+  const hasAuthCookie = allCookies.some(
     (c) => c.name.startsWith('sb-') && c.name.includes('-auth-token')
           || c.name.startsWith('supabase.auth.token')
   )
+  console.log('[middleware] hasAuthCookie:', hasAuthCookie)
 
   if (!hasAuthCookie) {
+    console.log('[middleware] NO auth cookie → redirecting to /login')
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     return NextResponse.redirect(loginUrl)
   }
 
+  console.log('[middleware] auth cookie found → allowing through')
   return NextResponse.next()
 }
 

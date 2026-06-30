@@ -5,18 +5,30 @@ import { cookies } from 'next/headers'
 // Auth client — reads/writes session cookies. Uses anon key.
 export async function createAuthClient() {
   const cookieStore = await cookies()
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const storageKey = `sb-${new URL(url).hostname.split('.')[0]}-auth-token`
+  console.log('[createAuthClient] storageKey derived:', storageKey)
+
   return createSSRClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    url,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => cookieStore.getAll(),
+        getAll: () => {
+          const all = cookieStore.getAll()
+          console.log('[createAuthClient.getAll] cookies:', all.map(c => c.name))
+          return all
+        },
         setAll: (cookiesToSet) => {
+          console.log('[createAuthClient.setAll] setting:', cookiesToSet.map(c => ({ name: c.name, value: c.value?.slice(0, 40) })))
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          } catch {}
+          } catch (e) {
+            console.error('[createAuthClient.setAll] error:', e)
+          }
         },
       },
     }
