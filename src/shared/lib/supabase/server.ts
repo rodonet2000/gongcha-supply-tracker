@@ -3,31 +3,27 @@ import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 // Auth client — reads/writes session cookies. Uses anon key.
+// @supabase/ssr derives the cookie name as `sb-{hostname-prefix}-auth-token`
+// from NEXT_PUBLIC_SUPABASE_URL — this must match middleware.ts's check.
 export async function createAuthClient() {
   const cookieStore = await cookies()
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const storageKey = `sb-${new URL(url).hostname.split('.')[0]}-auth-token`
-  console.log('[createAuthClient] storageKey derived:', storageKey)
-
   return createSSRClient(
-    url,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => {
-          const all = cookieStore.getAll()
-          console.log('[createAuthClient.getAll] cookies:', all.map(c => c.name))
-          return all
-        },
+        getAll: () => cookieStore.getAll(),
         setAll: (cookiesToSet) => {
-          console.log('[createAuthClient.setAll] setting:', cookiesToSet.map(c => ({ name: c.name, value: c.value?.slice(0, 40) })))
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
           } catch (e) {
-            console.error('[createAuthClient.setAll] error:', e)
+            // Expected when called from a Server Component (e.g. signOut()
+            // inside the dashboard layout) — cookies can only be written
+            // from a Server Action or Route Handler in Next.js.
+            console.error('[createAuthClient.setAll]', e)
           }
         },
       },
