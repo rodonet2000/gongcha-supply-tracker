@@ -6,7 +6,7 @@ import { cn } from '@/shared/lib/utils'
 import {
   LayoutDashboard, Download, ShoppingBag, Package, BookOpen,
   BarChart3, Coffee, ArrowDownToLine, ArrowUpFromLine, ShoppingCart,
-  Truck, ClipboardList, FileBarChart, Users,
+  Truck, ClipboardList, FileBarChart, Users, ClipboardCheck, TrendingDown,
 } from 'lucide-react'
 import type { UserRole, UserProfile } from '@/shared/types'
 import { UserMenu } from './user-menu'
@@ -23,12 +23,14 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/entradas',              label: 'Entradas',    icon: ArrowDownToLine, roles: ALL_ROLES },
   { href: '/salidas',               label: 'Salidas',     icon: ArrowUpFromLine, roles: ALL_ROLES },
   { href: '/kardex',                label: 'Kardex',      icon: ClipboardList,   roles: ALL_ROLES },
+  { href: '/conteo',                label: 'Conteo',      icon: ClipboardCheck,  roles: ALL_ROLES },
   { href: '/reportes/existencias',  label: 'Reportes',    icon: FileBarChart,    roles: ALL_ROLES },
   { href: '/compras',               label: 'Compras',     icon: ShoppingCart,    roles: ADMIN_UP },
   { href: '/proveedores',           label: 'Proveedores', icon: Truck,           roles: ADMIN_UP },
   { href: '/usuarios',              label: 'Usuarios',    icon: Users,           roles: ADMIN_UP },
   { href: '/extractor',             label: 'Extractor',   icon: Download,        roles: ADMIN_UP },
   { href: '/recetas',               label: 'Recetas',     icon: BookOpen,        roles: ADMIN_UP },
+  { href: '/merma',                 label: 'Merma',       icon: TrendingDown,    roles: ADMIN_UP },
   { href: '/reporte',               label: 'Análisis',    icon: BarChart3,       roles: ADMIN_UP },
 ]
 

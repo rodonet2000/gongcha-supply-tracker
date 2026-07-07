@@ -144,6 +144,46 @@ export interface Branch {
 
 export type UserRole = 'sucursal' | 'administrador' | 'direccion'
 
+export type CountStatus = 'draft' | 'submitted' | 'approved'
+
+export interface InventoryCountSession {
+  id: string
+  branch_id: string
+  period_label: string
+  period_start: string
+  period_end: string
+  status: CountStatus
+  notes: string | null
+  created_by: string
+  submitted_by: string | null
+  submitted_at: string | null
+  approved_by: string | null
+  approved_at: string | null
+  created_at: string
+  branches?: { name: string } | null
+}
+
+export interface InventoryCountItem {
+  id: string
+  session_id: string
+  supply_id: string
+  physical_qty: number | null
+  lot_no: string | null
+  expiry_date: string | null
+  notes: string | null
+  supplies?: { name: string; unit: string; category: string | null } | null
+}
+
+export interface YieldFactor {
+  id: string
+  supply_id: string
+  factor: number
+  unit_description: string | null
+  notes: string | null
+  created_at: string
+  supplies?: { name: string; unit: string } | null
+}
+
 export interface UserProfile {
   id: string
   user_id: string
